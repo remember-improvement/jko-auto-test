@@ -3,7 +3,6 @@ import allure
 import pytest
 
 
-API_URL = "http://127.0.0.1:8000/service/login"
 test_data = [
     (
         "Login Successful",
@@ -101,6 +100,8 @@ test_data = [
         "Method should be POST",
     ),
 ]
+
+API_URL = "http://127.0.0.1:8000/service/login"
 
 
 @allure.feature("Login API Tests")
