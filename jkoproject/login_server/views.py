@@ -1,7 +1,11 @@
 # Create your views here.
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from login_server.serailizers import LoginRequiredSerializer, LoginLengthSerializer
+from login_server.serailizers import (
+    LoginRequiredSerializer,
+    LoginLengthSerializer,
+    LoginTypeSerializer,
+)
 import json
 
 
@@ -15,34 +19,45 @@ def login_view(request):
             request_json = json.loads(request_body)
 
         except json.JSONDecodeError:
-            response_data = {"Status": "ErrorCode_05", "Message": "XXX_05"}
+            response_data = {"Status": 400, "Message": "request body is required"}
             return JsonResponse(response_data, status=400)
 
         required_validation = LoginRequiredSerializer(data=request_json)
         length_validation = LoginLengthSerializer(data=request_json)
+        type_validation = LoginTypeSerializer(data=request_json)
         if required_validation.is_valid():
             pass
         else:
-            response_data = {"Status": "ErrorCode_01", "Message": "XXX_01"}
+            invalid_field = list(required_validation.errors)[0]
+            response_data = {"Status": 400, "Message": f"{invalid_field} is required"}
 
             return JsonResponse(response_data, status=400)
         if length_validation.is_valid():
             pass
         else:
-            print(length_validation.errors)
-            response_data = {"Status": "ErrorCode_02", "Message": "XXX_02"}
+            invalid_field = list(length_validation.errors)[0]
+            response_data = {
+                "Status": 400,
+                "Message": f"{invalid_field} length too long",
+            }
+            return JsonResponse(response_data, status=400)
+        if type_validation.is_valid():
+            pass
+        else:
+            invalid_field = list(type_validation.errors)[0]
+            response_data = {"Status": 400, "Message": f"{invalid_field} should be str"}
             return JsonResponse(response_data, status=400)
         account = request_json["Account"]
         login_auth = request_json["LoginAuth"]
 
         if account == correct_username and login_auth == correct_auth:
-            response_data = {"Status": "Success", "Message": "Login successful"}
+            response_data = {"Status": 200, "Message": "Login successful"}
             return JsonResponse(response_data, status=200)
 
         elif account != correct_username or login_auth != correct_auth:
-            response_data = {"Status": "ErrorCode_03", "Message": "XXX_03"}
+            response_data = {"Status": 401, "Message": "Login failed"}
             return JsonResponse(response_data, status=401)
 
     else:
-        response_data = {"Status": "ErrorCode_04", "Message": "XXX_04"}
+        response_data = {"Status": 405, "Message": "Method should be POST"}
         return JsonResponse(response_data, status=405)
