@@ -1,7 +1,6 @@
 import requests
 import allure
 import pytest
-import json
 
 
 API_URL = "http://127.0.0.1:8000/service/login"

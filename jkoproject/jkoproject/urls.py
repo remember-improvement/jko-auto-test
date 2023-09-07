@@ -18,6 +18,6 @@ from django.urls import path, include
 from login_server.views import login_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('service/login', login_view),
+    path("admin/", admin.site.urls),
+    path("service/login", login_view),
 ]
