@@ -57,6 +57,9 @@ def login_view(request):
         elif account != correct_username or login_auth != correct_auth:
             response_data = {"Status": 401, "Message": "Login failed"}
             return JsonResponse(response_data, status=401)
+        else:
+            response_data = {"Status": 500, "Message": "System Error"}
+            return JsonResponse(response_data, status=500)
 
     else:
         response_data = {"Status": 405, "Message": "Method should be POST"}
