@@ -4,7 +4,6 @@ from django.views.decorators.csrf import csrf_exempt
 from login_server.serailizers import (
     LoginRequiredSerializer,
     LoginLengthSerializer,
-    LoginTypeSerializer,
 )
 import json
 
@@ -24,7 +23,6 @@ def login_view(request):
 
         required_validation = LoginRequiredSerializer(data=request_json)
         length_validation = LoginLengthSerializer(data=request_json)
-        type_validation = LoginTypeSerializer(data=request_json)
         if required_validation.is_valid():
             pass
         else:
@@ -40,12 +38,6 @@ def login_view(request):
                 "Status": 400,
                 "Message": f"{invalid_field} length too long",
             }
-            return JsonResponse(response_data, status=400)
-        if type_validation.is_valid():
-            pass
-        else:
-            invalid_field = list(type_validation.errors)[0]
-            response_data = {"Status": 400, "Message": f"{invalid_field} should be str"}
             return JsonResponse(response_data, status=400)
         account = request_json["Account"]
         login_auth = request_json["LoginAuth"]
